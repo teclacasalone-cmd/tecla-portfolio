@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
+import { ParallaxComponent } from "@/components/ui/parallax-scrolling";
 
 /* ── NAVBAR ── */
 function Navbar() {
@@ -8,16 +10,16 @@ function Navbar() {
   const links = [
     { href: "#about", label: "About" },
     { href: "#work", label: "Esperienza" },
-    { href: "#skills", label: "Competenze" },
+    { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Progetti" },
     { href: "#contact", label: "Contatti" },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
-      <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-14 border-b border-border">
-        <a href="#" className="text-sm font-semibold tracking-wide text-foreground">
-          Tecla Casalone
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#111]/80 backdrop-blur-md border-b border-white/5">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
+        <a href="#" className="font-heading text-sm font-semibold tracking-wide">
+          TC
         </a>
         <button className="md:hidden p-2" onClick={() => setOpen(!open)} aria-label="Menu">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,16 +32,16 @@ function Navbar() {
         </button>
         <div className="hidden md:flex gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-xs text-muted hover:text-foreground transition-colors uppercase tracking-wider">
+            <a key={l.href} href={l.href} className="text-xs text-[#888] hover:text-white transition-colors uppercase tracking-widest">
               {l.label}
             </a>
           ))}
         </div>
       </div>
       {open && (
-        <div className="md:hidden bg-background border-b border-border px-6 py-4 flex flex-col gap-3">
+        <div className="md:hidden bg-[#111]/95 backdrop-blur-md border-b border-white/5 px-6 py-4 flex flex-col gap-3">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-muted hover:text-foreground" onClick={() => setOpen(false)}>
+            <a key={l.href} href={l.href} className="text-sm text-[#888] hover:text-white" onClick={() => setOpen(false)}>
               {l.label}
             </a>
           ))}
@@ -49,55 +51,90 @@ function Navbar() {
   );
 }
 
-/* ── HERO ── */
+/* ── HERO con Apple Hello ── */
 function Hero() {
+  const [helloComplete, setHelloComplete] = useState(false);
+
   return (
-    <section className="pt-32 pb-24 px-6">
-      <div className="max-w-5xl mx-auto">
-        <p className="text-sm text-accent font-medium mb-6 tracking-wide">Digital Marketing & AI</p>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.1] tracking-tight mb-8 max-w-3xl">
-          Ciao, sono Tecla.
-          <br />
-          <span className="text-muted">Studio come le AI vedono i brand.</span>
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-6 bg-[#111]">
+      {/* Hello animation */}
+      <div className="mb-12">
+        <AppleHelloEnglishEffect
+          className="h-16 sm:h-24 md:h-32 text-[#e85d4a]"
+          speed={1.2}
+          onAnimationComplete={() => setHelloComplete(true)}
+        />
+      </div>
+
+      {/* Content fades in after hello */}
+      <div
+        className="text-center max-w-3xl transition-all duration-1000 ease-out"
+        style={{
+          opacity: helloComplete ? 1 : 0,
+          transform: helloComplete ? "translateY(0)" : "translateY(20px)",
+        }}
+      >
+        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
+          Sono <span className="text-[#e85d4a]">Tecla Casalone</span>
         </h1>
-        <p className="text-lg text-muted max-w-xl leading-relaxed mb-10">
-          Digital marketing specialist, co-founder di Citation Rate.
-          Aiuto le aziende a capire e migliorare la loro visibilità
-          nei sistemi di intelligenza artificiale.
+        <p className="text-lg sm:text-xl text-[#999] max-w-xl mx-auto leading-relaxed mb-10">
+          Digital marketing specialist. Studio come le AI vedono i brand
+          e creo strategie per migliorare la loro visibilità.
         </p>
-        <div className="flex gap-4">
-          <a href="#contact" className="px-6 py-3 bg-foreground text-background text-sm font-medium rounded-full hover:bg-warm transition-colors">
-            Scrivimi
+        <div className="flex gap-4 justify-center">
+          <a
+            href="#contact"
+            className="px-7 py-3 bg-[#e85d4a] hover:bg-[#d44a38] text-white text-sm font-medium rounded-full transition-colors"
+          >
+            Contattami
           </a>
-          <a href="#about" className="px-6 py-3 text-sm font-medium text-foreground border border-border rounded-full hover:bg-soft transition-colors">
-            Chi sono
+          <a
+            href="#about"
+            className="px-7 py-3 border border-white/15 hover:border-white/30 text-sm font-medium rounded-full transition-colors"
+          >
+            Scopri di più
           </a>
         </div>
+      </div>
+
+      {/* Scroll hint */}
+      <div
+        className="absolute bottom-8 flex flex-col items-center gap-2 text-[#555] transition-opacity duration-1000"
+        style={{ opacity: helloComplete ? 1 : 0 }}
+      >
+        <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+        <div className="w-px h-8 bg-gradient-to-b from-[#555] to-transparent" />
       </div>
     </section>
   );
 }
 
+/* ── PARALLAX SECTION ── */
+function ParallaxSection() {
+  return <ParallaxComponent />;
+}
+
 /* ── ABOUT ── */
 function About() {
   return (
-    <section id="about" className="py-24 px-6 bg-soft">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12">
+    <section id="about" className="py-28 px-6">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-16">
         <div className="md:col-span-2">
-          <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Chi sono</p>
-          <h2 className="text-3xl font-semibold tracking-tight">
-            Marketing, ricerca e un po&apos; di codice.
+          <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">About</span>
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3">
+            Marketing, ricerca
+            <br />e un po&apos; di codice.
           </h2>
         </div>
-        <div className="md:col-span-3 space-y-5 text-muted leading-relaxed">
+        <div className="md:col-span-3 space-y-5 text-[#999] leading-relaxed">
           <p>
             Sono una digital marketing specialist con specializzazione in AI Marketing
             e Generative Engine Optimization (GEO). Laureanda magistrale in Marketing,
-            Consumi e Comunicazione alla <strong className="text-foreground">IULM di Milano</strong>,
+            Consumi e Comunicazione alla <strong className="text-white">IULM di Milano</strong>,
             sto scrivendo la tesi sulla visibilità informativa nei sistemi LLM.
           </p>
           <p>
-            Ho co-fondato <strong className="text-foreground">Citation Rate</strong>, un tool
+            Ho co-fondato <strong className="text-white">Citation Rate</strong>, un tool
             che monitora come le intelligenze artificiali citano i brand. Lo sviluppo, gestisco
             il CRM, analizzo i modelli di linguaggio e ricerco nuovi parametri di monitoraggio.
           </p>
@@ -135,18 +172,20 @@ function Experience() {
   ];
 
   return (
-    <section id="work" className="py-24 px-6">
+    <section id="work" className="py-28 px-6 bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto">
-        <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Esperienza</p>
-        <h2 className="text-3xl font-semibold tracking-tight mb-12">Dove ho lavorato</h2>
-        <div className="divide-y divide-border">
+        <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">Esperienza</span>
+        <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">
+          Dove ho lavorato
+        </h2>
+        <div className="divide-y divide-white/5">
           {jobs.map((j, i) => (
-            <div key={i} className="py-8 grid md:grid-cols-4 gap-4 first:pt-0 last:pb-0">
-              <div className="text-sm text-muted font-mono">{j.period}</div>
+            <div key={i} className="group py-8 grid md:grid-cols-4 gap-4 first:pt-0 last:pb-0 hover:bg-white/[0.02] -mx-4 px-4 rounded-lg transition-colors">
+              <div className="text-sm text-[#666] font-mono">{j.period}</div>
               <div className="md:col-span-3">
-                <h3 className="font-semibold text-foreground">{j.role}</h3>
-                <p className="text-accent text-sm mb-2">{j.company}</p>
-                <p className="text-muted text-sm leading-relaxed">{j.desc}</p>
+                <h3 className="font-heading font-semibold text-white group-hover:text-[#e85d4a] transition-colors">{j.role}</h3>
+                <p className="text-[#e85d4a]/70 text-sm mb-2">{j.company}</p>
+                <p className="text-[#888] text-sm leading-relaxed">{j.desc}</p>
               </div>
             </div>
           ))}
@@ -162,7 +201,7 @@ function Education() {
     {
       period: "2024 — 2026",
       title: "Laurea Magistrale in Marketing, Consumi e Comunicazione",
-      detail: "IULM Milano — Specializzazione Digital Marketing Management",
+      detail: "IULM Milano — Digital Marketing Management",
       thesis: "Visibilità informativa nei sistemi LLM: un approccio GEO basato sull'AI Visibility Index (AIVX)",
     },
     {
@@ -180,30 +219,32 @@ function Education() {
   ];
 
   return (
-    <section className="py-24 px-6 bg-soft">
+    <section className="py-28 px-6">
       <div className="max-w-5xl mx-auto">
-        <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Formazione</p>
-        <h2 className="text-3xl font-semibold tracking-tight mb-12">Il mio percorso</h2>
-        <div className="space-y-8">
+        <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">Formazione</span>
+        <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">
+          Il mio percorso
+        </h2>
+        <div className="space-y-10">
           {edu.map((e, i) => (
             <div key={i} className="grid md:grid-cols-4 gap-4">
-              <div className="text-sm text-muted font-mono">{e.period}</div>
+              <div className="text-sm text-[#666] font-mono">{e.period}</div>
               <div className="md:col-span-3">
-                <h3 className="font-semibold text-foreground">{e.title}</h3>
-                <p className="text-sm text-muted">{e.detail}</p>
+                <h3 className="font-heading font-semibold text-white">{e.title}</h3>
+                <p className="text-sm text-[#888]">{e.detail}</p>
                 {e.thesis && (
-                  <p className="text-sm text-muted mt-2 italic">
+                  <p className="text-sm text-[#666] mt-2 italic border-l-2 border-[#e85d4a]/20 pl-4">
                     Tesi: &ldquo;{e.thesis}&rdquo;
                   </p>
                 )}
               </div>
             </div>
           ))}
-          <div className="grid md:grid-cols-4 gap-4 pt-4 border-t border-border">
-            <div className="text-sm text-muted font-mono">Cert.</div>
+          <div className="grid md:grid-cols-4 gap-4 pt-6 border-t border-white/5">
+            <div className="text-sm text-[#666] font-mono">Cert.</div>
             <div className="md:col-span-3">
-              <h3 className="font-semibold text-foreground">AIDA Database Fundamentals</h3>
-              <p className="text-sm text-muted">Moody&apos;s</p>
+              <h3 className="font-heading font-semibold text-white">AIDA Database Fundamentals</h3>
+              <p className="text-sm text-[#888]">Moody&apos;s</p>
             </div>
           </div>
         </div>
@@ -217,7 +258,7 @@ function Skills() {
   const groups = [
     {
       label: "AI Marketing",
-      items: ["Prompt Engineering", "OpenAI / Anthropic / Microsoft", "GEO & AI Visibility", "Content Strategy AI-driven"],
+      items: ["Prompt Engineering", "OpenAI / Anthropic / Microsoft", "GEO & AI Visibility", "Content Strategy"],
     },
     {
       label: "Advertising",
@@ -229,25 +270,27 @@ function Skills() {
     },
     {
       label: "Tools",
-      items: ["Shopify", "Canva", "GoHighLevel CRM", "Eversell", "WordPress", "AIDA Moody's"],
+      items: ["Shopify", "Canva", "GoHighLevel", "WordPress", "Eversell"],
     },
   ];
 
   return (
-    <section id="skills" className="py-24 px-6">
+    <section id="skills" className="py-28 px-6 bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto">
-        <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Competenze</p>
-        <h2 className="text-3xl font-semibold tracking-tight mb-12">Cosa so fare</h2>
-        <div className="grid sm:grid-cols-2 gap-x-16 gap-y-10">
+        <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">Skills</span>
+        <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">
+          Cosa so fare
+        </h2>
+        <div className="grid sm:grid-cols-2 gap-x-20 gap-y-12">
           {groups.map((g) => (
             <div key={g.label}>
-              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border">
+              <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white mb-5 pb-3 border-b border-white/10">
                 {g.label}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {g.items.map((item) => (
-                  <li key={item} className="text-muted text-sm flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
+                  <li key={item} className="text-[#888] text-sm flex items-center gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#e85d4a] shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -266,48 +309,61 @@ function Projects() {
     {
       title: "Citation Rate",
       label: "Co-founder",
-      desc: "Tool per monitorare la visibilità dei brand nei sistemi AI. Analisi delle citazioni, CRM, dashboard e metriche proprietarie.",
+      desc: "Tool per monitorare la visibilità dei brand nei sistemi AI. Citazioni, CRM, dashboard, metriche proprietarie.",
+      featured: true,
     },
     {
       title: "Intrigue App",
       label: "IULM",
-      desc: "Rinnovo dell'applicazione: PED, implementazione CRM, sicurezza dei dati.",
+      desc: "Rinnovo app, PED, CRM, sicurezza dati.",
+      featured: false,
     },
     {
       title: "Google Merchandising (GA4)",
       label: "IULM",
-      desc: "Analisi carrello clienti, strategie di vendita e campagne marketing data-driven.",
+      desc: "Analisi carrello, strategie vendita, campagne data-driven.",
+      featured: false,
     },
     {
-      title: "Rocket Espresso — Globalizzazione",
+      title: "Rocket Espresso — Global",
       label: "IULM",
-      desc: "Adattamento prodotto a nuove culture, strategie di lancio online e offline.",
+      desc: "Lancio prodotto internazionale, strategie online e offline.",
+      featured: false,
     },
     {
       title: "Coca Cola — Sostenibilità",
       label: "IULM",
-      desc: "Lancio nuovo prodotto, comunicazione multicanale, contenuti grafici e social strategy.",
+      desc: "Lancio prodotto, comunicazione multicanale, social strategy.",
+      featured: false,
     },
   ];
 
   return (
-    <section id="projects" className="py-24 px-6 bg-soft">
+    <section id="projects" className="py-28 px-6">
       <div className="max-w-5xl mx-auto">
-        <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Progetti</p>
-        <h2 className="text-3xl font-semibold tracking-tight mb-12">Cosa ho fatto</h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">Progetti</span>
+        <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">
+          Cosa ho creato
+        </h2>
+        <div className="grid md:grid-cols-2 gap-5">
           {projects.map((p) => (
             <div
               key={p.title}
-              className="p-6 bg-background rounded-lg border border-border hover:border-accent/30 transition-colors"
+              className={`group p-6 rounded-xl border transition-all hover:-translate-y-1 ${
+                p.featured
+                  ? "border-[#e85d4a]/20 bg-[#e85d4a]/[0.03] md:col-span-2 hover:border-[#e85d4a]/40"
+                  : "border-white/5 bg-white/[0.02] hover:border-white/15"
+              }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-foreground">{p.title}</h3>
-                <span className="text-[11px] text-accent font-medium uppercase tracking-wider bg-accent-soft px-2.5 py-1 rounded-full">
+                <h3 className="font-heading font-semibold text-white">{p.title}</h3>
+                <span className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full ${
+                  p.featured ? "text-[#e85d4a] bg-[#e85d4a]/10" : "text-[#666] bg-white/5"
+                }`}>
                   {p.label}
                 </span>
               </div>
-              <p className="text-muted text-sm leading-relaxed">{p.desc}</p>
+              <p className="text-[#888] text-sm leading-relaxed">{p.desc}</p>
             </div>
           ))}
         </div>
@@ -334,23 +390,26 @@ function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 px-6">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12">
+    <section id="contact" className="py-28 px-6 bg-[#0a0a0a]">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-16">
         <div className="md:col-span-2">
-          <p className="text-xs text-accent font-medium uppercase tracking-wider mb-3">Contatti</p>
-          <h2 className="text-3xl font-semibold tracking-tight mb-4">Parliamone.</h2>
-          <p className="text-muted leading-relaxed mb-8">
-            Hai un progetto? Un&apos;idea? Oppure vuoi solo fare due chiacchiere sul futuro del marketing. Scrivimi.
+          <span className="text-[#e85d4a] text-xs font-medium uppercase tracking-widest font-heading">Contatti</span>
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-6">
+            Parliamone.
+          </h2>
+          <p className="text-[#888] leading-relaxed mb-8">
+            Hai un progetto? Un&apos;idea? O vuoi fare due chiacchiere
+            sul futuro del marketing e dell&apos;AI. Scrivimi.
           </p>
-          <div className="space-y-3 text-sm text-muted">
-            <a href="mailto:tecla.casalone@gmail.com" className="flex items-center gap-3 hover:text-foreground transition-colors">
-              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="space-y-4 text-sm text-[#888]">
+            <a href="mailto:tecla.casalone@gmail.com" className="flex items-center gap-3 hover:text-white transition-colors">
+              <svg className="w-4 h-4 shrink-0 text-[#e85d4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               tecla.casalone@gmail.com
             </a>
             <div className="flex items-center gap-3">
-              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 shrink-0 text-[#e85d4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -362,47 +421,45 @@ function Contact() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="name" className="block text-xs font-medium text-foreground uppercase tracking-wider mb-2">Nome</label>
+                <label htmlFor="name" className="block text-xs font-heading font-medium uppercase tracking-widest mb-2">Nome</label>
                 <input
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-3 bg-soft rounded-lg border border-border text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-muted/50"
+                  className="w-full px-4 py-3 bg-[#111] rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#e85d4a]/50 transition-colors placeholder:text-[#444]"
                   placeholder="Il tuo nome"
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-xs font-medium text-foreground uppercase tracking-wider mb-2">Email</label>
+                <label htmlFor="email" className="block text-xs font-heading font-medium uppercase tracking-widest mb-2">Email</label>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="w-full px-4 py-3 bg-soft rounded-lg border border-border text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-muted/50"
+                  className="w-full px-4 py-3 bg-[#111] rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#e85d4a]/50 transition-colors placeholder:text-[#444]"
                   placeholder="La tua email"
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="message" className="block text-xs font-medium text-foreground uppercase tracking-wider mb-2">Messaggio</label>
+              <label htmlFor="message" className="block text-xs font-heading font-medium uppercase tracking-widest mb-2">Messaggio</label>
               <textarea
                 id="message"
                 name="message"
                 rows={5}
                 required
-                className="w-full px-4 py-3 bg-soft rounded-lg border border-border text-sm focus:outline-none focus:border-accent transition-colors resize-none placeholder:text-muted/50"
-                placeholder="Raccontami..."
+                className="w-full px-4 py-3 bg-[#111] rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#e85d4a]/50 transition-colors resize-none placeholder:text-[#444]"
+                placeholder="Raccontami del tuo progetto..."
               />
             </div>
             <button
               type="submit"
-              className="px-8 py-3 bg-foreground text-background text-sm font-medium rounded-full hover:bg-warm transition-colors"
+              className="px-8 py-3 bg-[#e85d4a] hover:bg-[#d44a38] text-white text-sm font-medium rounded-full transition-colors"
             >
               Invia messaggio
             </button>
-            {sent && (
-              <p className="text-sm text-accent">Si aprirà il tuo client email.</p>
-            )}
+            {sent && <p className="text-sm text-[#e85d4a]">Si aprirà il tuo client email.</p>}
           </form>
         </div>
       </div>
@@ -413,18 +470,12 @@ function Contact() {
 /* ── FOOTER ── */
 function Footer() {
   return (
-    <footer className="py-8 px-6 border-t border-border">
+    <footer className="py-8 px-6 border-t border-white/5">
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-muted">
-          &copy; {new Date().getFullYear()} Tecla Casalone
-        </p>
+        <p className="text-xs text-[#555]">&copy; {new Date().getFullYear()} Tecla Casalone</p>
         <div className="flex gap-6">
-          <a href="mailto:tecla.casalone@gmail.com" className="text-xs text-muted hover:text-foreground transition-colors">
-            Email
-          </a>
-          <a href="#" className="text-xs text-muted hover:text-foreground transition-colors">
-            LinkedIn
-          </a>
+          <a href="mailto:tecla.casalone@gmail.com" className="text-xs text-[#555] hover:text-white transition-colors">Email</a>
+          <a href="#" className="text-xs text-[#555] hover:text-white transition-colors">LinkedIn</a>
         </div>
       </div>
     </footer>
@@ -438,6 +489,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <ParallaxSection />
         <About />
         <Experience />
         <Education />
