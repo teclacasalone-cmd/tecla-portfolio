@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, DM_Sans } from "next/font/google";
+import { Sora, Outfit } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const sora = Sora({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const dmSans = DM_Sans({
+const outfit = Outfit({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+    <html lang="it" className={`${sora.variable} ${outfit.variable}`}>
       <body className="min-h-screen bg-[#faf8f5] text-[#1a1a1a] font-[var(--font-body)] antialiased">
         {children}
       </body>

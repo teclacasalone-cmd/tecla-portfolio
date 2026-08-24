@@ -1,9 +1,79 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useState, useRef } from "react";
+import { motion, useInView, useScroll, useTransform } from "motion/react";
 
-/* ── NAVBAR ── */
+/* ── Scroll fade-up wrapper ── */
+function FadeUp({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── Scroll slide-in from left ── */
+function SlideLeft({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, x: -50 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── Scroll slide-in from right ── */
+function SlideRight({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, x: 50 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── Scale on scroll ── */
+function ScaleIn({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ══════════════════════════
+   NAVBAR
+   ══════════════════════════ */
 function Navbar() {
   const [open, setOpen] = useState(false);
   const links = [
@@ -48,77 +118,84 @@ function Navbar() {
   );
 }
 
-/* ── HERO ── */
+/* ══════════════════════════
+   HERO con parallax sottile
+   ══════════════════════════ */
 function Hero() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
   const nameLetters = "Tecla Casalone".split("");
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-6">
-      <motion.p
-        className="text-sm text-[#c44536] font-medium tracking-widest uppercase mb-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.4 }}
-      >
-        Digital Marketing & AI
-      </motion.p>
+    <section ref={ref} className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      <motion.div style={{ y, opacity }} className="text-center">
+        <motion.p
+          className="text-sm text-[#c44536] font-medium tracking-widest uppercase mb-6 font-[var(--font-heading)]"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+        >
+          Digital Marketing & AI
+        </motion.p>
 
-      <h1 className="font-[var(--font-heading)] text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1] text-center mb-8">
-        {nameLetters.map((letter, i) => (
-          <motion.span
-            key={i}
-            className={i < 5 ? "text-[#c44536]" : "text-[#1a1a1a]"}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: i * 0.06,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        ))}
-      </h1>
+        <h1 className="font-[var(--font-heading)] text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1] text-center mb-8">
+          {nameLetters.map((letter, i) => (
+            <motion.span
+              key={i}
+              className={i < 5 ? "text-[#c44536]" : "text-[#1a1a1a]"}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </motion.span>
+          ))}
+        </h1>
 
-      <motion.p
-        className="text-lg text-[#777] max-w-lg mx-auto text-center leading-relaxed mb-10"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-      >
-        Studio come le AI vedono i brand e creo strategie per migliorare la loro visibilità.
-      </motion.p>
+        <motion.p
+          className="text-lg text-[#777] max-w-lg mx-auto text-center leading-relaxed mb-10"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+        >
+          Studio come le AI vedono i brand e creo strategie per migliorare la loro visibilità.
+        </motion.p>
 
-      <motion.div
-        className="flex gap-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.6 }}
-      >
-        <a href="#contact" className="px-7 py-3 bg-[#c44536] hover:bg-[#a93a2d] text-white text-sm font-medium rounded-full transition-colors">
-          Contattami
-        </a>
-        <a href="#about" className="px-7 py-3 border border-[#d5cfc7] hover:border-[#999] text-sm font-medium rounded-full transition-colors">
-          Scopri di più
-        </a>
+        <motion.div
+          className="flex gap-4 justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.6 }}
+        >
+          <a href="#contact" className="px-7 py-3 bg-[#c44536] hover:bg-[#a93a2d] text-white text-sm font-medium rounded-full transition-colors">
+            Contattami
+          </a>
+          <a href="#about" className="px-7 py-3 border border-[#d5cfc7] hover:border-[#999] text-sm font-medium rounded-full transition-colors">
+            Scopri di più
+          </a>
+        </motion.div>
       </motion.div>
     </section>
   );
 }
 
-/* ── ABOUT ── */
+/* ══════════════════════════
+   ABOUT
+   ══════════════════════════ */
 function About() {
   return (
     <section id="about" className="py-24 px-6 bg-[#f0ece6]">
       <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-16">
-        <div className="md:col-span-2">
-          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">About</span>
+        <SlideLeft className="md:col-span-2">
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">About</span>
           <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3">
             Marketing, ricerca e un po&apos; di codice.
           </h2>
-        </div>
-        <div className="md:col-span-3 space-y-5 text-[#555] leading-relaxed">
+        </SlideLeft>
+        <SlideRight className="md:col-span-3 space-y-5 text-[#555] leading-relaxed" delay={0.15}>
           <p>
             Sono una digital marketing specialist con specializzazione in AI Marketing
             e Generative Engine Optimization (GEO). Laureanda magistrale in Marketing,
@@ -134,13 +211,15 @@ function About() {
             Fuori dal lavoro faccio CrossFit (gare in team e coaching per adolescenti),
             vado in moto e faccio volontariato con AVIS, ADMO e Croce Rossa.
           </p>
-        </div>
+        </SlideRight>
       </div>
     </section>
   );
 }
 
-/* ── EXPERIENCE ── */
+/* ══════════════════════════
+   EXPERIENCE
+   ══════════════════════════ */
 function Experience() {
   const jobs = [
     { period: "Attuale", role: "Researcher & Developer, Co-founder", company: "Citation Rate", desc: "Sviluppo software, CRM, analisi modelli AI, ricerca parametri di monitoraggio." },
@@ -151,18 +230,22 @@ function Experience() {
   return (
     <section id="work" className="py-24 px-6">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">Esperienza</span>
-        <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Dove ho lavorato</h2>
+        <FadeUp>
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">Esperienza</span>
+          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Dove ho lavorato</h2>
+        </FadeUp>
         <div className="divide-y divide-[#e5e0d8]">
           {jobs.map((j, i) => (
-            <div key={i} className="py-8 grid md:grid-cols-4 gap-4 first:pt-0 last:pb-0">
-              <div className="text-sm text-[#999] font-mono">{j.period}</div>
-              <div className="md:col-span-3">
-                <h3 className="font-[var(--font-heading)] font-semibold">{j.role}</h3>
-                <p className="text-[#c44536] text-sm mb-2">{j.company}</p>
-                <p className="text-[#777] text-sm leading-relaxed">{j.desc}</p>
+            <FadeUp key={i} delay={i * 0.12}>
+              <div className="py-8 grid md:grid-cols-4 gap-4 first:pt-0 last:pb-0">
+                <div className="text-sm text-[#999] font-mono">{j.period}</div>
+                <div className="md:col-span-3">
+                  <h3 className="font-[var(--font-heading)] font-semibold">{j.role}</h3>
+                  <p className="text-[#c44536] text-sm mb-2">{j.company}</p>
+                  <p className="text-[#777] text-sm leading-relaxed">{j.desc}</p>
+                </div>
               </div>
-            </div>
+            </FadeUp>
           ))}
         </div>
       </div>
@@ -170,7 +253,9 @@ function Experience() {
   );
 }
 
-/* ── EDUCATION ── */
+/* ══════════════════════════
+   EDUCATION
+   ══════════════════════════ */
 function Education() {
   const edu = [
     { period: "2024 — 2026", title: "Laurea Magistrale in Marketing, Consumi e Comunicazione", detail: "IULM Milano — Digital Marketing Management", thesis: "Visibilità informativa nei sistemi LLM: un approccio GEO basato sull'AI Visibility Index (AIVX)" },
@@ -181,37 +266,45 @@ function Education() {
   return (
     <section className="py-24 px-6 bg-[#f0ece6]">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">Formazione</span>
-        <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Il mio percorso</h2>
+        <FadeUp>
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">Formazione</span>
+          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Il mio percorso</h2>
+        </FadeUp>
         <div className="space-y-10">
           {edu.map((e, i) => (
-            <div key={i} className="grid md:grid-cols-4 gap-4">
-              <div className="text-sm text-[#999] font-mono">{e.period}</div>
+            <FadeUp key={i} delay={i * 0.1}>
+              <div className="grid md:grid-cols-4 gap-4">
+                <div className="text-sm text-[#999] font-mono">{e.period}</div>
+                <div className="md:col-span-3">
+                  <h3 className="font-[var(--font-heading)] font-semibold">{e.title}</h3>
+                  <p className="text-sm text-[#777]">{e.detail}</p>
+                  {e.thesis && (
+                    <p className="text-sm text-[#999] mt-2 italic border-l-2 border-[#c44536]/20 pl-4">
+                      Tesi: &ldquo;{e.thesis}&rdquo;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </FadeUp>
+          ))}
+          <FadeUp delay={0.3}>
+            <div className="grid md:grid-cols-4 gap-4 pt-6 border-t border-[#e5e0d8]">
+              <div className="text-sm text-[#999] font-mono">Cert.</div>
               <div className="md:col-span-3">
-                <h3 className="font-[var(--font-heading)] font-semibold">{e.title}</h3>
-                <p className="text-sm text-[#777]">{e.detail}</p>
-                {e.thesis && (
-                  <p className="text-sm text-[#999] mt-2 italic border-l-2 border-[#c44536]/20 pl-4">
-                    Tesi: &ldquo;{e.thesis}&rdquo;
-                  </p>
-                )}
+                <h3 className="font-[var(--font-heading)] font-semibold">AIDA Database Fundamentals</h3>
+                <p className="text-sm text-[#777]">Moody&apos;s</p>
               </div>
             </div>
-          ))}
-          <div className="grid md:grid-cols-4 gap-4 pt-6 border-t border-[#e5e0d8]">
-            <div className="text-sm text-[#999] font-mono">Cert.</div>
-            <div className="md:col-span-3">
-              <h3 className="font-[var(--font-heading)] font-semibold">AIDA Database Fundamentals</h3>
-              <p className="text-sm text-[#777]">Moody&apos;s</p>
-            </div>
-          </div>
+          </FadeUp>
         </div>
       </div>
     </section>
   );
 }
 
-/* ── SKILLS ── */
+/* ══════════════════════════
+   SKILLS
+   ══════════════════════════ */
 function Skills() {
   const groups = [
     { label: "AI Marketing", items: ["Prompt Engineering", "OpenAI / Anthropic / Microsoft", "GEO & AI Visibility", "Content Strategy"] },
@@ -223,11 +316,13 @@ function Skills() {
   return (
     <section id="skills" className="py-24 px-6">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">Skills</span>
-        <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Cosa so fare</h2>
+        <FadeUp>
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">Skills</span>
+          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Cosa so fare</h2>
+        </FadeUp>
         <div className="grid sm:grid-cols-2 gap-x-20 gap-y-12">
-          {groups.map((g) => (
-            <div key={g.label}>
+          {groups.map((g, gi) => (
+            <ScaleIn key={g.label} delay={gi * 0.1}>
               <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-wider mb-5 pb-3 border-b border-[#e5e0d8]">
                 {g.label}
               </h3>
@@ -239,7 +334,7 @@ function Skills() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScaleIn>
           ))}
         </div>
       </div>
@@ -247,7 +342,9 @@ function Skills() {
   );
 }
 
-/* ── PROJECTS ── */
+/* ══════════════════════════
+   PROJECTS
+   ══════════════════════════ */
 function Projects() {
   const projects = [
     { title: "Citation Rate", label: "Co-founder", desc: "Tool per monitorare la visibilità dei brand nei sistemi AI. Citazioni, CRM, dashboard, metriche proprietarie.", featured: true },
@@ -260,28 +357,33 @@ function Projects() {
   return (
     <section id="projects" className="py-24 px-6 bg-[#f0ece6]">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">Progetti</span>
-        <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Cosa ho creato</h2>
+        <FadeUp>
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">Progetti</span>
+          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-14">Cosa ho creato</h2>
+        </FadeUp>
         <div className="grid md:grid-cols-2 gap-5">
-          {projects.map((p) => (
-            <div
+          {projects.map((p, i) => (
+            <ScaleIn
               key={p.title}
-              className={`p-6 rounded-xl border transition-all hover:-translate-y-1 ${
-                p.featured
-                  ? "border-[#c44536]/20 bg-[#c44536]/[0.04] md:col-span-2 hover:border-[#c44536]/40"
-                  : "border-[#e5e0d8] bg-white hover:border-[#ccc]"
-              }`}
+              delay={i * 0.08}
+              className={p.featured ? "md:col-span-2" : ""}
             >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-[var(--font-heading)] font-semibold">{p.title}</h3>
-                <span className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full ${
-                  p.featured ? "text-[#c44536] bg-[#c44536]/10" : "text-[#999] bg-[#f0ece6]"
-                }`}>
-                  {p.label}
-                </span>
+              <div className={`p-6 rounded-xl border transition-all hover:-translate-y-1 h-full ${
+                p.featured
+                  ? "border-[#c44536]/20 bg-[#c44536]/[0.04] hover:border-[#c44536]/40"
+                  : "border-[#e5e0d8] bg-white hover:border-[#ccc]"
+              }`}>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-[var(--font-heading)] font-semibold">{p.title}</h3>
+                  <span className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full ${
+                    p.featured ? "text-[#c44536] bg-[#c44536]/10" : "text-[#999] bg-[#f0ece6]"
+                  }`}>
+                    {p.label}
+                  </span>
+                </div>
+                <p className="text-[#777] text-sm leading-relaxed">{p.desc}</p>
               </div>
-              <p className="text-[#777] text-sm leading-relaxed">{p.desc}</p>
-            </div>
+            </ScaleIn>
           ))}
         </div>
       </div>
@@ -289,7 +391,9 @@ function Projects() {
   );
 }
 
-/* ── CONTACT ── */
+/* ══════════════════════════
+   CONTACT
+   ══════════════════════════ */
 function Contact() {
   const [sent, setSent] = useState(false);
 
@@ -309,8 +413,8 @@ function Contact() {
   return (
     <section id="contact" className="py-24 px-6">
       <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-16">
-        <div className="md:col-span-2">
-          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest">Contatti</span>
+        <SlideLeft className="md:col-span-2">
+          <span className="text-[#c44536] text-xs font-medium uppercase tracking-widest font-[var(--font-heading)]">Contatti</span>
           <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl font-bold tracking-tight mt-3 mb-6">Parliamone.</h2>
           <p className="text-[#777] leading-relaxed mb-8">
             Hai un progetto? Un&apos;idea? O vuoi fare due chiacchiere sul futuro del marketing e dell&apos;AI.
@@ -330,8 +434,8 @@ function Contact() {
               Rescaldina (MI)
             </div>
           </div>
-        </div>
-        <div className="md:col-span-3">
+        </SlideLeft>
+        <SlideRight className="md:col-span-3" delay={0.15}>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
@@ -352,7 +456,7 @@ function Contact() {
             </button>
             {sent && <p className="text-sm text-[#c44536]">Si aprirà il tuo client email.</p>}
           </form>
-        </div>
+        </SlideRight>
       </div>
     </section>
   );
